@@ -4,7 +4,7 @@ from tqdm import tqdm
 
 
 def train(model: nn.Module, optimizer: torch.optim.Optimizer, loss_fn: callable,
-          train_loader: torch.utils.data.DataLoader, nb_epochs: int):
+          train_loader: torch.utils.data.DataLoader, nb_epochs: int, show_tqdm: bool = True):
     """Trains the model on the training data, with classical gradient descent.
 
     Args:
@@ -13,11 +13,12 @@ def train(model: nn.Module, optimizer: torch.optim.Optimizer, loss_fn: callable,
         loss_fn (callable): The loss function to use for training
         train_loader (torch.utils.data.DataLoader): The training data loader
         nb_epochs (int): The number of epochs to train the model for
+        show_tqdm (bool): Whether to use tqdm for progress bar. Default: True
     """
 
     model.train()
 
-    for epoch in tqdm(range(nb_epochs)):
+    for epoch in tqdm(range(nb_epochs), disable=not show_tqdm):
         for batch_idx, (data, targets) in enumerate(train_loader):
             optimizer.zero_grad()
             outputs = model(data)
@@ -28,7 +29,7 @@ def train(model: nn.Module, optimizer: torch.optim.Optimizer, loss_fn: callable,
 
 def train_with_aggregation(model: nn.Module, optimizer: torch.optim.Optimizer, loss_fn: callable,
                            train_loader: torch.utils.data.DataLoader, nb_epochs: int, aggregate_fn: callable,
-                           nb_simulated_byzantine_nodes: int):
+                           nb_simulated_byzantine_nodes: int, show_tqdm: bool = True):
     """Trains the model on the training data, aggregating the gradients by the specified function.
 
     Args:
@@ -39,11 +40,12 @@ def train_with_aggregation(model: nn.Module, optimizer: torch.optim.Optimizer, l
         nb_epochs (int): The number of epochs to train the model for
         aggregate_fn (callable): The function to aggregate the gradients
         nb_simulated_byzantine_nodes (int): The number of simulated Byzantine nodes
+        show_tqdm (bool): Whether to use tqdm to display the progress bar
     """
 
     model.train()
 
-    for epoch in tqdm(range(nb_epochs)):
+    for epoch in tqdm(range(nb_epochs), disable=not show_tqdm):
         gradients = []  # Create an empty list to store the gradients
         for batch_idx, (data, targets) in enumerate(train_loader):
             optimizer.zero_grad()
