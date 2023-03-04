@@ -1,0 +1,4 @@
+# The directory is usefull to see the structure of the project and to know where to put the data
+# but we dont want to push it to github because it is too big
+
+MNIST/
