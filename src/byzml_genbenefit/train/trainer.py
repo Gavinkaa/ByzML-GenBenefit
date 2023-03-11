@@ -2,6 +2,8 @@ import torch.nn as nn
 import torch.utils.data
 from tqdm import tqdm
 
+from byzml_genbenefit.aggregators.aggregator import Aggregator
+
 
 def train(model: nn.Module, optimizer: torch.optim.Optimizer, loss_fn: callable,
           train_loader: torch.utils.data.DataLoader, nb_epochs: int, show_tqdm: bool = True):
@@ -28,7 +30,7 @@ def train(model: nn.Module, optimizer: torch.optim.Optimizer, loss_fn: callable,
 
 
 def train_with_aggregation(model: nn.Module, optimizer: torch.optim.Optimizer, loss_fn: callable,
-                           train_loader: torch.utils.data.DataLoader, nb_epochs: int, aggregate_fn: callable,
+                           train_loader: torch.utils.data.DataLoader, nb_epochs: int, aggregator: Aggregator,
                            nb_simulated_byzantine_nodes: int, show_tqdm: bool = True):
     """Trains the model on the training data, aggregating the gradients by the specified function.
 
@@ -38,7 +40,7 @@ def train_with_aggregation(model: nn.Module, optimizer: torch.optim.Optimizer, l
         loss_fn (callable): The loss function to use for training
         train_loader (torch.utils.data.DataLoader): The training data loader
         nb_epochs (int): The number of epochs to train the model for
-        aggregate_fn (callable): The function to aggregate the gradients
+        aggregator (Aggregator): The aggregator to use for aggregating the gradients
         nb_simulated_byzantine_nodes (int): The number of simulated Byzantine nodes
         show_tqdm (bool): Whether to use tqdm to display the progress bar
     """
@@ -56,7 +58,7 @@ def train_with_aggregation(model: nn.Module, optimizer: torch.optim.Optimizer, l
 
             if batch_idx % nb_simulated_byzantine_nodes == 0:
                 # Simulate Byzantine nodes
-                aggregated_gradients = aggregate_fn(gradients)
+                aggregated_gradients = aggregator.aggregate(gradients, 0)
                 for i, param in enumerate(model.parameters()):
                     param.grad = aggregated_gradients[i]
 
@@ -66,7 +68,7 @@ def train_with_aggregation(model: nn.Module, optimizer: torch.optim.Optimizer, l
 
         if len(gradients) > 0:
             # Simulate Byzantine nodes
-            aggregated_gradients = aggregate_fn(gradients)
+            aggregated_gradients = aggregator.aggregate(gradients, 0)
             for i, param in enumerate(model.parameters()):
                 param.grad = aggregated_gradients[i]
             optimizer.step()

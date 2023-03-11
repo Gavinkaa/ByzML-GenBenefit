@@ -1,6 +1,9 @@
 import torch
-import byzml_genbenefit.aggregator.mean
 from torch.testing import assert_close
+
+from byzml_genbenefit.aggregators import mean
+
+aggregator = mean.MeanAggregator()
 
 
 def test_aggregate():
@@ -11,7 +14,7 @@ def test_aggregate():
 
     # Call the function with the fake gradients
     gradients = [[grad1, grad2], [grad2, grad3], [grad1, grad3]]
-    result = byzml_genbenefit.aggregator.mean.aggregate(gradients)
+    result = aggregator.aggregate(gradients, 0)
 
     # Check that the output has the expected shape
     assert len(result) == 2
@@ -28,7 +31,7 @@ def test_aggregate():
 def test_aggregate_with_empty_list():
     # Call the function with an empty list
     gradients = []
-    result = byzml_genbenefit.aggregator.mean.aggregate(gradients)
+    result = aggregator.aggregate(gradients, 0)
 
     # Check that the output is an empty list
     assert result == []
