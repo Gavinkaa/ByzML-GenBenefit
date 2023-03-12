@@ -44,8 +44,8 @@ for epoch in tqdm(range(nb_epochs)):
     if aggregate_fn is None:
         train(model, optimizer, loss_fn, train_loader, 1, show_tqdm=False)
     else:
-        train_with_aggregation(model, optimizer, loss_fn, train_loader, 1, aggregate_fn, nb_of_byzantine_nodes,
-                               show_tqdm=False)
+        train_with_aggregation(model, optimizer, loss_fn, train_loader, 1, aggregate_fn, nb_of_nodes,
+                               nb_of_byzantine_nodes, show_tqdm=False)
 
     accuracy, _, _ = utils.compute_accuracy(train_loader, model)
     accuracies_train.append(accuracy)
