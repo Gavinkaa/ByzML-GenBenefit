@@ -1,10 +1,11 @@
 import torch
 
-from byzml_genbenefit.aggregators import aggregator
+from byzml_genbenefit.aggregators.aggregator import Aggregator
 
 
-class MeanAggregator(aggregator.Aggregator):
-    def aggregate(self, gradients: list, f: int) -> list:
+class MeanAggregator(Aggregator):
+    @staticmethod
+    def aggregate(gradients: list, f: int) -> list:
         """Aggregates the gradients by averaging them.
 
         Args:

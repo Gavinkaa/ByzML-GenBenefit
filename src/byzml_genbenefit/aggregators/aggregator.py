@@ -1,8 +1,12 @@
-from typing import Protocol
+from abc import ABC, abstractmethod
 
 
-class Aggregator(Protocol):
-    def aggregate(self, gradients: list, f: int) -> list:
+class Aggregator(ABC):
+    """Abstract class for aggregators."""
+
+    @staticmethod
+    @abstractmethod
+    def aggregate(gradients: list, f: int) -> list:
         """Aggregates the gradients, where f is the number of Byzantine nodes.
 
         Args:
