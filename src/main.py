@@ -16,23 +16,37 @@ model = NN()
 optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
 loss_fn = F.cross_entropy
 aggregate_fn: Aggregator = mean.MeanAggregator()
-num_epochs = 10
-nb_simulated_byzantine_nodes = 10
+nb_epochs = 10
+
+# Size of a batch, with or without aggregation, this represents the number
+# of data points that will be used to compute one gradient descent
 batch_size = 1000
+
+# Number of simulated nodes (workers), they can be malicious or not
+nb_of_nodes = 10
+
+# Number of byzantine nodes (malicious), this number is (by def) <= nb_of_nodes
+nb_of_byzantine_nodes = 3
+
+assert nb_of_byzantine_nodes <= nb_of_nodes
 # ------------------------
 
-train_loader, test_loader = get_data_loader(batch_size=batch_size, shuffle_train=True, shuffle_test=False)
-# train(model, optimizer, loss_fn, train_loader, num_epochs)
-# train_with_aggregation(model, optimizer, loss_fn, train_loader, num_epochs, aggregate_fn,
-#                        nb_simulated_byzantine_nodes, show_tqdm=False)
+if aggregate_fn is None:
+    train_loader, test_loader = get_data_loader(batch_size=batch_size, shuffle_train=True, shuffle_test=False)
+else:
+    train_loader, test_loader = get_data_loader(batch_size=batch_size // nb_of_nodes, shuffle_train=True,
+                                                shuffle_test=False)
 
 accuracies_train = []
 accuracies_test = []
 
-for epoch in tqdm(range(num_epochs)):
-    # train_with_aggregation(model, optimizer, loss_fn, train_loader, 1, aggregate_fn,
-    #                        nb_simulated_byzantine_nodes, show_tqdm=False)
-    train(model, optimizer, loss_fn, train_loader, 1, show_tqdm=False)
+for epoch in tqdm(range(nb_epochs)):
+    if aggregate_fn is None:
+        train(model, optimizer, loss_fn, train_loader, 1, show_tqdm=False)
+    else:
+        train_with_aggregation(model, optimizer, loss_fn, train_loader, 1, aggregate_fn, nb_of_byzantine_nodes,
+                               show_tqdm=False)
+
     accuracy, _, _ = utils.compute_accuracy(train_loader, model)
     accuracies_train.append(accuracy)
 
