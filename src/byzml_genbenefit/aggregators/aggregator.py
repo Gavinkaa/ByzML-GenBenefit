@@ -5,6 +5,10 @@ import torch
 class Aggregator(ABC):
     """Abstract class for aggregators."""
 
+    @abstractmethod
+    def __repr__(self):
+        ...
+
     @staticmethod
     @abstractmethod
     def __call__(gradients: list, f: int) -> list:

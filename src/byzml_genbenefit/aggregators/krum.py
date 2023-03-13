@@ -5,6 +5,9 @@ from byzml_genbenefit.aggregators import aggregator
 
 class KrumAggregator(aggregator.Aggregator):
 
+    def __repr__(self):
+        return 'KrumAggregator'
+
     @staticmethod
     def _compute_distance_matrix(gradients: list) -> torch.Tensor:
         """Computes the euclidean distance matrix between the gradients.

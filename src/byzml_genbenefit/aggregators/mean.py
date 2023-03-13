@@ -4,6 +4,10 @@ from byzml_genbenefit.aggregators.aggregator import Aggregator
 
 
 class MeanAggregator(Aggregator):
+
+    def __repr__(self):
+        return 'MeanAggregator'
+
     @staticmethod
     def __call__(gradients: list, f: int) -> list:
         """Aggregates the gradients by averaging them.
