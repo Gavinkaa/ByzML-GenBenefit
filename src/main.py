@@ -3,8 +3,9 @@ from torch.nn import functional as F
 from tqdm import tqdm
 
 from byzml_genbenefit import utils
-from byzml_genbenefit.aggregators import mean
 from byzml_genbenefit.aggregators.aggregator import Aggregator
+from byzml_genbenefit.aggregators.krum import KrumAggregator
+from byzml_genbenefit.aggregators.mean import MeanAggregator
 from byzml_genbenefit.data.mnist import get_data_loader
 from byzml_genbenefit.models.cnn import CNN_MNIST as CNN
 from byzml_genbenefit.models.nn import NN_MNIST as NN
@@ -15,7 +16,7 @@ from byzml_genbenefit.train.trainer import train, train_with_aggregation
 model = NN()
 optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
 loss_fn = F.cross_entropy
-aggregate_fn: Aggregator = mean.MeanAggregator()
+aggregate_fn: Aggregator = KrumAggregator()
 nb_epochs = 10
 
 # Size of a batch, with or without aggregation, this represents the number
@@ -54,5 +55,6 @@ for epoch in tqdm(range(nb_epochs)):
     accuracies_test.append(accuracy)
 
 # plot accuracies
-utils.plot_accuracies(accuracies_train, accuracies_test, (0.9, 1.0))
+utils.plot_accuracies(accuracies_train, accuracies_test, accuracy_range=(0.9, 1.0),
+                      title=f'Accuracy on MNIST dataset, using {aggregate_fn}')
 print(f'Final accuracy on test set: {accuracies_test[-1]}')
