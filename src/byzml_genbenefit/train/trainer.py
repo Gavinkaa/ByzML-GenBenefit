@@ -55,7 +55,7 @@ def train_with_aggregation(model: nn.Module, optimizer: torch.optim.Optimizer, l
             outputs = model(data)
             loss = loss_fn(outputs, targets)
             loss.backward()
-            gradients.append([param.grad for param in model.parameters()])  # Append the gradients to the list
+            gradients.append([param.grad.clone() for param in model.parameters()])  # Append the gradients to the list
 
             if len(gradients) == nb_of_nodes:
                 # Simulate decentralized learning
