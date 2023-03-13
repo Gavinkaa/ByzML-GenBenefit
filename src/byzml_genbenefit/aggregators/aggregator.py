@@ -28,7 +28,8 @@ class Aggregator(ABC):
             gradients (list): The list of gradients to transform
 
         Returns:
-            tuple: A tuple of the flattened tensors and their original shapes
+            tuple: A tuple of the flattened tensors and their original shapes. Shapes are
+                stored as a list of torch.Size
         """
         flattened_tensors = []
         shapes = [tsr.shape for tsr in gradients[0]]
@@ -36,9 +37,12 @@ class Aggregator(ABC):
         for gradient in gradients:
             tmp_gradient = []
             for tsr in gradient:
+                # Flatten the tensor
                 tmp_gradient.append(tsr.view(-1, 1))
+            # Concatenate the flattened tensors
             flattened_tensor = torch.cat(tmp_gradient, dim=0)
             flattened_tensors.append(flattened_tensor)
+
         return flattened_tensors, shapes
 
     @staticmethod
@@ -48,16 +52,18 @@ class Aggregator(ABC):
 
         Args:
             flattened_tensors (list): The list of flattened tensors to transform
-            shapes (list): The list of original shapes of the tensors
+            shapes (list): The list of original shapes of the tensors. (list of torch.Size)
 
         Returns:
             list: A list of gradients (list of list of torch.Tensor)
         """
+
         gradients = []
         for tsr in flattened_tensors:
             gradient = []
             start = 0
             for shape in shapes:
+                # shape.numel() returns the number of elements in the tensor
                 end = start + shape.numel()
                 gradient.append(tsr[start:end].view(shape))
                 start = end
