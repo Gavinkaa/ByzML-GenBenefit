@@ -29,20 +29,21 @@ def compute_accuracy(test_data_loader: torch.utils.data.DataLoader, model: torch
     return float(num_correct) / float(num_samples), num_correct, num_samples
 
 
-def plot_accuracies(accuracies_train: list[float], accuracies_test: list[float],
+def plot_accuracies(accuracies_train: list[float], accuracies_test: list[float], title: str = 'Accuracy evolution',
                     accuracy_range: tuple[float, float] = None):
     """Plots the accuracies of the training and test data
 
     Args:
         accuracies_train (list[float]): The accuracies of the training data
         accuracies_test (list[float]): The accuracies of the test data
+        title (str): The title of the plot. Default: 'Accuracy evolution'
         accuracy_range (tuple[float, float]): The range of the y-axis. Default: None
     """
 
     plt.plot(accuracies_train, label='train')
     plt.plot(accuracies_test, label='test')
     plt.legend()
-    plt.title('Accuracy evolution')
+    plt.title(title)
     plt.xlabel('Epoch')
     plt.ylabel('Accuracy')
 
