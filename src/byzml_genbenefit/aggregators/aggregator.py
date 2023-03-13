@@ -7,7 +7,7 @@ class Aggregator(ABC):
 
     @staticmethod
     @abstractmethod
-    def aggregate(gradients: list, f: int) -> list:
+    def __call__(gradients: list, f: int) -> list:
         """Aggregates the gradients, where f is the number of Byzantine nodes.
 
         Args:
