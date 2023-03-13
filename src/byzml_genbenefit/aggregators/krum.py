@@ -79,4 +79,7 @@ class KrumAggregator(aggregator.Aggregator):
         # Find the index of the gradient that is the nearest to its neighbors
         _, index = torch.min(distances_to_neighbors, dim=0)
 
-        return KrumAggregator._tensor_as_gradient(gradients_as_tensor[index], shapes)
+        # This return is similar to the one below, but it's less efficient
+        # return KrumAggregator._tensor_as_gradient(gradients_as_tensor, shapes)[index]
+
+        return KrumAggregator._tensor_as_gradient([gradients_as_tensor[index]], shapes)[0]
