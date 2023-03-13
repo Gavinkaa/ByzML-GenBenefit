@@ -23,8 +23,10 @@ class KrumAggregator(aggregator.Aggregator):
             for j, grad_j in enumerate(gradients):
                 if i == j:
                     continue
-                # torch dist is the euclidean distance
-                distance_matrix[i, j] = torch.dist(grad_i, grad_j)
+
+                # distance_matrix[i, j] = (grad_i - grad_j).pow(2).sum()  # SLOWER
+                distance_matrix[i, j] = torch.dist(grad_i, grad_j).pow(2)
+
         return distance_matrix
 
     @staticmethod
