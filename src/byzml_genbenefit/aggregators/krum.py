@@ -9,27 +9,6 @@ class KrumAggregator(aggregator.Aggregator):
         return 'KrumAggregator'
 
     @staticmethod
-    def _compute_distance_matrix(gradients: list) -> torch.Tensor:
-        """Computes the euclidean distance matrix between the gradients.
-
-        Args:
-            gradients (list): The list of gradients to aggregate
-
-        Returns:
-            torch.Tensor: The distance matrix
-        """
-        distance_matrix = torch.zeros((len(gradients), len(gradients)))
-        for i, grad_i in enumerate(gradients):
-            for j, grad_j in enumerate(gradients):
-                if i == j:
-                    continue
-
-                # distance_matrix[i, j] = (grad_i - grad_j).pow(2).sum()  # SLOWER
-                distance_matrix[i, j] = torch.dist(grad_i, grad_j).pow(2)
-
-        return distance_matrix
-
-    @staticmethod
     def _compute_distance_to_nearest_neighbors(distance_matrix: torch.Tensor, f: int) -> torch.Tensor:
         """Computes the distance to the n - f nearest neighbors of each gradient.
 
