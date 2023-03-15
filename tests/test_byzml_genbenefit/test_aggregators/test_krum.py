@@ -1,7 +1,7 @@
-import pytest
 import torch
 
 from byzml_genbenefit.aggregators.krum import KrumAggregator
+from test_byzml_genbenefit.test_aggregators.utils import check_consistency_list_tensor
 
 aggregator = KrumAggregator()
 
@@ -14,12 +14,4 @@ def test_aggregate():
 
     expected_aggregated_gradient = [torch.tensor([.2, .3, .4]), torch.tensor([.3, .4, .5])]
 
-    aggregated_gradient = aggregator(gradients, 1)
-
-    # aggregated_gradient should be a list of tensors
-
-    assert all([isinstance(tensor, torch.Tensor) for tensor in aggregated_gradient])
-    assert all([tensor.shape == expected_tensor.shape for tensor, expected_tensor in
-                zip(aggregated_gradient, expected_aggregated_gradient)])
-    assert all([torch.allclose(tensor, expected_tensor) for tensor, expected_tensor in
-                zip(aggregated_gradient, expected_aggregated_gradient)])
+    check_consistency_list_tensor(aggregator, gradients, 1, expected_aggregated_gradient)

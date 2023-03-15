@@ -1,7 +1,7 @@
 import torch
-from torch.testing import assert_close
 
 from byzml_genbenefit.aggregators import mean
+from test_byzml_genbenefit.test_aggregators.utils import check_consistency_list_tensor
 
 aggregator = mean.MeanAggregator()
 
@@ -21,11 +21,9 @@ def test_aggregate():
     assert result[0].shape == torch.Size([3])
     assert result[1].shape == torch.Size([3])
 
-    # Check that the output is close to the expected values
-    expected_0 = torch.tensor([(1 + 2 + 1) / 3, (2 + 4 + 2) / 3, (3 + 6 + 3) / 3])
-    expected_1 = torch.tensor([(2 + 3 + 3) / 3, (4 + 6 + 6) / 3, (6 + 9 + 9) / 3])
-    assert_close(result[0], expected_0, rtol=1e-3, atol=1e-3)
-    assert_close(result[1], expected_1, rtol=1e-3, atol=1e-3)
+    expected_output = [torch.tensor([(1 + 2 + 1) / 3, (2 + 4 + 2) / 3, (3 + 6 + 3) / 3]),
+                       torch.tensor([(2 + 3 + 3) / 3, (4 + 6 + 6) / 3, (6 + 9 + 9) / 3])]
+    check_consistency_list_tensor(aggregator, gradients, 0, expected_output)
 
 
 def test_aggregate_with_empty_list():
