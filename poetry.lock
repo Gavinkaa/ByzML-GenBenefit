@@ -737,6 +737,17 @@ setuptools = "*"
 wheel = "*"
 
 [[package]]
+name = "package"
+version = "0.1.1"
+description = "package is a package to package your package"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "package-0.1.1.tar.gz", hash = "sha256:01eee19a56a936bd63222f0a3c531fcdba37b5ad1bd833b960d62fb960b4955e"},
+]
+
+[[package]]
 name = "packaging"
 version = "23.0"
 description = "Core utilities for Python packages"
@@ -1065,6 +1076,18 @@ files = [
 ]
 
 [[package]]
+name = "style"
+version = "1.1.0"
+description = "🌈 Terminal string styling"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "style-1.1.0-py2.py3-none-any.whl", hash = "sha256:6485a4bcb84629341a5fd1587fe3ac4887daa4741f0c8a1d01b9c3c8a263afe7"},
+    {file = "style-1.1.0.tar.gz", hash = "sha256:8eb365fc15039b19b728bd4e6e85fb7daf24e7aeeec6a15a666f97484c564005"},
+]
+
+[[package]]
 name = "tomli"
 version = "2.0.1"
 description = "A lil' TOML parser"
@@ -1190,6 +1213,20 @@ files = [
 ]
 
 [[package]]
+name = "update"
+version = "0.0.1"
+description = ""
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "update-0.0.1-py2.py3-none-any.whl", hash = "sha256:a25522b4bf60e3e3c1a3ff3ca3a4f5a328ac4b8ff400fdc9614483147e313323"},
+]
+
+[package.dependencies]
+style = "1.1.0"
+
+[[package]]
 name = "urllib3"
 version = "1.26.14"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
@@ -1245,4 +1282,4 @@ test = ["pytest (>=3.0.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "0b05e6d678323cebedf984a5309db516b2e28df17a97fca55f58f57c8b6e5b2a"
+content-hash = "16629e645eb1b1bf9b6b46f5f8d4b074234fd644299ff662ec7124b570d42379"
