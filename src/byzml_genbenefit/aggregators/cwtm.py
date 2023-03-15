@@ -24,10 +24,16 @@ class CWTMAggregator(aggregator.Aggregator):
 
         # for each coordinate, sort the gradients in ascending order, and take the average of the ones
         # between the [f+1, n-f] positions
-        trimmed_mean = torch.zeros_like(gradients_as_tensor[0])
-        for i in range(len(gradients_as_tensor)):
-            sorted_gradients, _ = torch.sort(gradients_as_tensor[i])
-            trimmed_mean[i] = torch.mean(sorted_gradients[f:len(gradients_as_tensor) - f])
+        # gradients_as_tensor is a list of tensors, each tensor is a list coordinates
 
-        return CWTMAggregator._tensor_as_gradient([trimmed_mean], shapes)[0]
+        # TODO: implement this
+
+        # trimmed_means = torch.zeros_like(gradients_as_tensor[0])
+        # for i in range(gradients_as_tensor[0].shape[0]):
+        #     tensor_coordinates = [g[i] for g in gradients_as_tensor]
+        #     tensor_coordinates.sort()
+        #     trimmed_mean = torch.mean(torch.stack(tensor_coordinates[f:-f]), dim=0)
+        #     trimmed_means[i] = trimmed_mean
+        #
+        # return CWTMAggregator._tensor_as_gradient([trimmed_means], shapes)[0]
 
