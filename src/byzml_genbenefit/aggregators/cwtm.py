@@ -11,6 +11,7 @@ class CWTMAggregator(aggregator.Aggregator):
     @staticmethod
     def __call__(gradients: list, f: int) -> list:
         """Aggregates the gradients using the CWTM (coordinate-wise trimmed mean) algorithm.
+            We remove the f lowest and f the highest values, and then take the mean of the remaining ones.
 
         Args:
             gradients (list): The list of gradients to aggregate
@@ -20,20 +21,16 @@ class CWTMAggregator(aggregator.Aggregator):
             list: The aggregated gradients
         """
 
-        gradients_as_tensor, shapes = CWTMAggregator._gradient_as_tensor(gradients)
+        aggregated_gradients = []
+        for i, grad_list in enumerate(zip(*gradients)):
+            # Compute the element-wise average of the tensors in grad_list
+            stacked_tensor = torch.stack(grad_list)
 
-        # for each coordinate, sort the gradients in ascending order, and take the average of the ones
-        # between the [f+1, n-f] positions
-        # gradients_as_tensor is a list of tensors, each tensor is a list coordinates
+            # Remove the f lowest and f highest values in dimension 0
+            stacked_tensor, _ = torch.sort(stacked_tensor, dim=0)
+            stacked_tensor = stacked_tensor[f:-f]
 
-        # TODO: implement this
+            avg_tensor = torch.mean(stacked_tensor, dim=0)
 
-        # trimmed_means = torch.zeros_like(gradients_as_tensor[0])
-        # for i in range(gradients_as_tensor[0].shape[0]):
-        #     tensor_coordinates = [g[i] for g in gradients_as_tensor]
-        #     tensor_coordinates.sort()
-        #     trimmed_mean = torch.mean(torch.stack(tensor_coordinates[f:-f]), dim=0)
-        #     trimmed_means[i] = trimmed_mean
-        #
-        # return CWTMAggregator._tensor_as_gradient([trimmed_means], shapes)[0]
-
+            aggregated_gradients.append(avg_tensor)
+        return aggregated_gradients
