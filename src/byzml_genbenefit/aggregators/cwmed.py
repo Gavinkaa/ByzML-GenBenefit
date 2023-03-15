@@ -22,7 +22,7 @@ class CWMedAggregator(aggregator.Aggregator):
 
         aggregated_gradients = []
         for i, grad_list in enumerate(zip(*gradients)):
-            # Compute the element-wise average of the tensors in grad_list
-            avg_tensor = torch.median(torch.stack(grad_list), dim=0)
-            aggregated_gradients.append(avg_tensor)
+            # Compute the element-wise median_tensor of the tensors in grad_list
+            median_tensor, _ = torch.median(torch.stack(grad_list), dim=0)
+            aggregated_gradients.append(median_tensor)
         return aggregated_gradients
