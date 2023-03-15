@@ -8,9 +8,9 @@ aggregator = CWTMAggregator()
 
 def test_aggregate_1():
     gradients = [
-        [torch.Tensor([1, 2, 3]), torch.Tensor([4, 5, 6]), torch.Tensor([7, 8, 9])],
-        [torch.Tensor([2, 4, 6]), torch.Tensor([8, 10, 12]), torch.Tensor([14, 16, 18])],
-        [torch.Tensor([3, 6, 9]), torch.Tensor([12, 15, 18]), torch.Tensor([21, 24, 27])],
+        [torch.Tensor([1, 2, 3]), torch.Tensor([8, 10, 12]), torch.Tensor([7, 8, 9])],
+        [torch.Tensor([2, 4, 6]), torch.Tensor([4, 5, 6]), torch.Tensor([21, 24, 27])],
+        [torch.Tensor([3, 6, 9]), torch.Tensor([12, 15, 18]), torch.Tensor([14, 16, 18])],
     ]
     f = 1
     expected_output = [
