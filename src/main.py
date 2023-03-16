@@ -4,6 +4,9 @@ from tqdm import tqdm
 
 from byzml_genbenefit import utils
 from byzml_genbenefit.aggregators.aggregator import Aggregator
+from byzml_genbenefit.aggregators.cwmed import CWMedAggregator
+from byzml_genbenefit.aggregators.cwtm import CWTMAggregator
+from byzml_genbenefit.aggregators.gm import GMAggregator
 from byzml_genbenefit.aggregators.krum import KrumAggregator
 from byzml_genbenefit.aggregators.mean import MeanAggregator
 from byzml_genbenefit.data.mnist import get_data_loader
@@ -12,22 +15,22 @@ from byzml_genbenefit.models.nn import NN_MNIST as NN
 from byzml_genbenefit.train.trainer import train, train_with_aggregation
 
 # --- Hyper-parameters ---
-# model = CNN()
-model = NN()
+model = CNN()
+# model = NN()
 optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
 loss_fn = F.cross_entropy
-aggregate_fn: Aggregator = KrumAggregator()
-nb_epochs = 10
+aggregate_fn: Aggregator = None
+nb_epochs = 100
 
 # Size of a batch, with or without aggregation, this represents the number
 # of data points that will be used to compute one gradient descent
 batch_size = 1000
 
 # Number of simulated nodes (workers), they can be malicious or not
-nb_of_nodes = 10
+nb_of_nodes = 5
 
 # Number of byzantine nodes (malicious), this number is (by def) <= nb_of_nodes
-nb_of_byzantine_nodes = 3
+nb_of_byzantine_nodes = 1
 
 assert nb_of_byzantine_nodes <= nb_of_nodes
 # ------------------------
@@ -56,5 +59,7 @@ for epoch in tqdm(range(nb_epochs)):
 
 # plot accuracies
 utils.plot_accuracies(accuracies_train, accuracies_test, accuracy_range=(0.9, 1.0),
-                      title=f'Accuracy on MNIST dataset, using {aggregate_fn}')
+                      title=f'Accuracy on MNIST dataset, using {aggregate_fn},'
+                            f'\n{nb_of_nodes} nodes, '
+                            f'{nb_of_byzantine_nodes} byzantine nodes and {batch_size} batch size')
 print(f'Final accuracy on test set: {accuracies_test[-1]}')
