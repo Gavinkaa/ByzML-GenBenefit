@@ -30,7 +30,7 @@ def compute_accuracy(test_data_loader: torch.utils.data.DataLoader, model: torch
 
 
 def plot_accuracies(accuracies_train: list[float], accuracies_test: list[float], title: str = 'Accuracy evolution',
-                    accuracy_range: tuple[float, float] = None):
+                    accuracy_range: tuple[float, float] = None, save: bool = False):
     """Plots the accuracies of the training and test data
 
     Args:
@@ -38,6 +38,7 @@ def plot_accuracies(accuracies_train: list[float], accuracies_test: list[float],
         accuracies_test (list[float]): The accuracies of the test data
         title (str): The title of the plot. Default: 'Accuracy evolution'
         accuracy_range (tuple[float, float]): The range of the y-axis. Default: None
+        save (bool): Whether to save the plot. Default: False
     """
 
     plt.plot(accuracies_train, label='train')
@@ -50,4 +51,7 @@ def plot_accuracies(accuracies_train: list[float], accuracies_test: list[float],
     if accuracy_range is not None:
         plt.ylim(accuracy_range)
 
-    plt.show()
+    if save:
+        plt.savefig(f'{title}.png')
+    else:
+        plt.show()

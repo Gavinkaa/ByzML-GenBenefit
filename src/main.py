@@ -6,7 +6,6 @@ from byzml_genbenefit import utils
 from byzml_genbenefit.aggregators.aggregator import Aggregator
 from byzml_genbenefit.aggregators.cwmed import CWMedAggregator
 from byzml_genbenefit.aggregators.cwtm import CWTMAggregator
-from byzml_genbenefit.aggregators.gm import GMAggregator
 from byzml_genbenefit.aggregators.krum import KrumAggregator
 from byzml_genbenefit.aggregators.mean import MeanAggregator
 from byzml_genbenefit.data.mnist import get_data_loader
@@ -64,5 +63,5 @@ for epoch in tqdm(range(nb_epochs)):
 utils.plot_accuracies(accuracies_train, accuracies_test, accuracy_range=(0.9, 1.0),
                       title=f'Accuracy on MNIST dataset, using {aggregate_fn},'
                             f'\n{nb_of_nodes} nodes, '
-                            f'{nb_of_byzantine_nodes} byzantine nodes and {batch_size} batch size')
+                            f'{nb_of_byzantine_nodes} byzantine nodes and {batch_size} batch size', save=True)
 print(f'Final accuracy on test set: {accuracies_test[-1]}')
