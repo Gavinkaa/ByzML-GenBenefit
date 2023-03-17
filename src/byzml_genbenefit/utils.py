@@ -52,6 +52,7 @@ def plot_accuracies(accuracies_train: list[float], accuracies_test: list[float],
         plt.ylim(accuracy_range)
 
     if save:
-        plt.savefig(f'{title}.png')
+        fig_name = title.replace('\n', ' ').replace(' ', '_') + '.png'
+        plt.savefig(fig_name)
     else:
         plt.show()
