@@ -15,12 +15,13 @@ from byzml_genbenefit.models.nn import NN_MNIST as NN
 from byzml_genbenefit.train.trainer import train, train_with_aggregation
 
 # --- Hyper-parameters ---
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = CNN()
 # model = NN()
 optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
 loss_fn = F.cross_entropy
 aggregate_fn: Aggregator = None
-nb_epochs = 100
+nb_epochs = 1
 
 # Size of a batch, with or without aggregation, this represents the number
 # of data points that will be used to compute one gradient descent
@@ -43,6 +44,8 @@ else:
 
 accuracies_train = []
 accuracies_test = []
+
+model.to(device)
 
 for epoch in tqdm(range(nb_epochs)):
     if aggregate_fn is None:

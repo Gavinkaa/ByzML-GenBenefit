@@ -18,10 +18,12 @@ def train(model: nn.Module, optimizer: torch.optim.Optimizer, loss_fn: callable,
         show_tqdm (bool): Whether to use tqdm for progress bar. Default: True
     """
 
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model.train()
 
     for epoch in tqdm(range(nb_epochs), disable=not show_tqdm):
         for batch_idx, (data, targets) in enumerate(train_loader):
+            data, targets = data.to(device), targets.to(device)
             optimizer.zero_grad()
             outputs = model(data)
             loss = loss_fn(outputs, targets)
@@ -45,12 +47,13 @@ def train_with_aggregation(model: nn.Module, optimizer: torch.optim.Optimizer, l
         nb_of_byzantine_nodes (int): The number of byzantine nodes (malicious) to simulate
         show_tqdm (bool): Whether to use tqdm to display the progress bar
     """
-
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model.train()
 
     for epoch in tqdm(range(nb_epochs), disable=not show_tqdm):
         gradients = []  # Create an empty list to store the gradients
         for batch_idx, (data, targets) in enumerate(train_loader):
+            data, targets = data.to(device), targets.to(device)
             optimizer.zero_grad()
             outputs = model(data)
             loss = loss_fn(outputs, targets)
