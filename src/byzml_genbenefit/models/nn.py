@@ -3,11 +3,13 @@ import torch.nn.functional as F
 
 
 class NN_MNIST(nn.Module):
-    def __init__(self):
+    def __init__(self, device):
         super(NN_MNIST, self).__init__()
         self.fc1 = nn.Linear(784, 128)
         self.fc2 = nn.Linear(128, 64)
         self.fc3 = nn.Linear(64, 10)
+
+        self.device = device
 
     def forward(self, x):
         x = x.view(-1, 784)

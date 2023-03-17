@@ -4,7 +4,7 @@ import torch.nn.functional as F
 
 
 class CNN_MNIST(nn.Module):
-    def __init__(self):
+    def __init__(self, device):
         super(CNN_MNIST, self).__init__()
 
         self.conv1 = nn.Conv2d(in_channels=1, out_channels=32, kernel_size=3, stride=1)
@@ -12,6 +12,8 @@ class CNN_MNIST(nn.Module):
 
         self.fc1 = nn.Linear(in_features=64 * 5 * 5, out_features=128)
         self.fc2 = nn.Linear(in_features=128, out_features=10)
+
+        self.device = device
 
     def forward(self, x):
         x = F.relu(self.conv1(x))

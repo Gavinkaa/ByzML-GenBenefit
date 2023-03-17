@@ -15,7 +15,7 @@ from byzml_genbenefit.train.trainer import train, train_with_aggregation
 
 # --- Hyper-parameters ---
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = CNN()
+model = CNN(device)
 # model = NN()
 optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
 loss_fn = F.cross_entropy

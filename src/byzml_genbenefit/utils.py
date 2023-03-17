@@ -20,6 +20,7 @@ def compute_accuracy(test_data_loader: torch.utils.data.DataLoader, model: torch
 
     with torch.no_grad():  # reduce memory consumption
         for x, y in test_data_loader:
+            x = x.to(model.device)
             # TODO check if we can send the data to the GPU
             scores = model(x)
             _, predictions = scores.max(1)
