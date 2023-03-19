@@ -20,11 +20,11 @@ model = CNN(device)
 optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
 loss_fn = F.cross_entropy
 aggregate_fn: Aggregator = None
-nb_epochs = 1
+nb_epochs = 100
 
 # Size of a batch, with or without aggregation, this represents the number
 # of data points that will be used to compute one gradient descent
-batch_size = 1000
+batch_size = 100
 
 # Number of simulated nodes (workers), they can be malicious or not
 nb_of_nodes = 5
