@@ -56,3 +56,17 @@ def plot_accuracies(accuracies_train: list[float], accuracies_test: list[float],
         plt.savefig(fig_name)
     else:
         plt.show()
+
+
+def save_accuracies_to_csv(accuracies_train: list[float], accuracies_test: list[float], filename: str):
+    """Saves the accuracies of the training and test data to a csv file
+
+    Args:
+        accuracies_train (list[float]): The accuracies of the training data
+        accuracies_test (list[float]): The accuracies of the test data
+        filename (str): The name of the file
+    """
+    with open(filename, 'w') as f:
+        f.write('epoch,train,test\n')
+        for i in range(len(accuracies_train)):
+            f.write(f'{i+1},{accuracies_train[i]},{accuracies_test[i]}\n')
