@@ -32,7 +32,7 @@ class GMAggregator(aggregator.Aggregator):
 
         for _ in range(GMAggregator.max_iter):
 
-            weights = [1 / torch.norm(x - g) for g in gradients_as_tensor]
+            weights = [1 / (GMAggregator.epsilon + torch.norm(x - g)) for g in gradients_as_tensor]
 
             # x_new = torch.zeros(x.shape)
             # for i, g in enumerate(gradients_as_tensor):
