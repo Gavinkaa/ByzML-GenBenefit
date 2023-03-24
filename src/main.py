@@ -109,5 +109,6 @@ if __name__ == '__main__':
     print(f'Final accuracy on test set: {accuracies_test[-1]}')
 
     # Save the accuracies in a csv file
-    filename = f'./results/nodes_{nb_of_nodes}_byz_{nb_of_byzantine_nodes}_batch_{batch_size}_epochs_{nb_epochs}.csv'
+    filename = f'./results/nodes_{nb_of_nodes}_byz_{nb_of_byzantine_nodes}_batch_' \
+               f'{batch_size}_epochs_{nb_epochs}_agg_{aggregate_fn}.csv'
     utils.save_accuracies_to_csv(accuracies_train, accuracies_test, filename)
