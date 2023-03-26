@@ -70,7 +70,7 @@ def train_with_aggregation(model: nn.Module, optimizer: torch.optim.Optimizer, l
 
         if len(gradients) > 0:
             # Simulate Byzantine nodes
-            aggregated_gradients = aggregator(gradients, nb_of_byzantine_nodes)
+            aggregated_gradients = aggregator(gradients, 0)
             for i, param in enumerate(model.parameters()):
                 param.grad = aggregated_gradients[i]
             optimizer.step()
