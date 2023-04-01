@@ -38,7 +38,7 @@ if __name__ == '__main__':
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = CNN(device)
     # model = NN()
-    optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
     loss_fn = F.cross_entropy
 
     # choose the aggregator with a match
@@ -108,7 +108,7 @@ if __name__ == '__main__':
     #                             f'{nb_of_byzantine_nodes} byzantine nodes and {batch_size} batch size', save=False)
     print(f'Final accuracy on test set: {accuracies_test[-1]}')
 
-    # Save the accuracies in a csv file
-    filename = f'./results/nodes_{nb_of_nodes}_byz_{nb_of_byzantine_nodes}_batch_' \
-               f'{batch_size}_epochs_{nb_epochs}_agg_{aggregate_fn}.csv'
-    utils.save_accuracies_to_csv(accuracies_train, accuracies_test, filename)
+    # # Save the accuracies in a csv file
+    # filename = f'./results/nodes_{nb_of_nodes}_byz_{nb_of_byzantine_nodes}_batch_' \
+    #            f'{batch_size}_epochs_{nb_epochs}_agg_{aggregate_fn}.csv'
+    # utils.save_accuracies_to_csv(accuracies_train, accuracies_test, filename)
