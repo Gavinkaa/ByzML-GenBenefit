@@ -35,11 +35,13 @@ if __name__ == '__main__':
     # ------------------------
 
     # --- Hyper-parameters ---
-    torch.manual_seed(0)
+    seed = 0
+    torch.manual_seed(seed)
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = CNN(device)
     # model = NN()
+    learning_rate = 0.01
     optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
     loss_fn = F.cross_entropy
 
@@ -112,5 +114,5 @@ if __name__ == '__main__':
 
     # Save the accuracies in a csv file
     filename = f'./results/nodes_{nb_of_nodes}_byz_{nb_of_byzantine_nodes}_batch_' \
-               f'{batch_size}_epochs_{nb_epochs}_agg_{aggregate_fn}.csv'
+               f'{batch_size}_epochs_{nb_epochs}_agg_{aggregate_fn}_lr{learning_rate}_seed{seed}.csv'
     utils.save_accuracies_to_csv(accuracies_train, accuracies_test, filename)
