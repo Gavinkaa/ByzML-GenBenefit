@@ -114,5 +114,5 @@ if __name__ == '__main__':
 
     # Save the accuracies in a csv file
     filename = f'./results/nodes_{nb_of_nodes}_byz_{nb_of_byzantine_nodes}_batch_' \
-               f'{batch_size}_epochs_{nb_epochs}_agg_{aggregate_fn}_lr{learning_rate}_seed{seed}.csv'
+               f'{batch_size}_epochs_{nb_epochs}_agg_{aggregate_fn}_lr_{learning_rate}_seed_{seed}.csv'
     utils.save_accuracies_to_csv(accuracies_train, accuracies_test, filename)
