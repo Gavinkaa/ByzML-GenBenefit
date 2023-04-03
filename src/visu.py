@@ -8,10 +8,10 @@ INPUT_FOLDER = '../results/MNIST/batch_1100/'
 OUTPUT_FOLDER = '../results/MNIST/batch_1100/'
 
 
-def plot(nb_of_nodes: list[str], batch_size: list[str], nb_epochs: list[str], aggregators: list[str]):
+def plot(nb_of_nodes: list[str], batch_size: list[str], nb_epochs: list[str], aggregators: list[str], files: list[str]):
     plt.rcParams['figure.figsize'] = (10, 8)
 
-    for file in os.listdir(Path(INPUT_FOLDER)):
+    for file in files:
         if file.endswith('.csv'):
             file_labels = file.split('_')
             file_nb_nodes = file_labels[1]
@@ -75,15 +75,21 @@ def plot(nb_of_nodes: list[str], batch_size: list[str], nb_epochs: list[str], ag
                f'{[a for a in aggregators if a != "None"][0]}.png'
 
     plt.savefig(Path(OUTPUT_FOLDER, filename))
-    plt.show()
+    # plt.show()
+    plt.clf()
 
 
 def main():
     # first we list all different values of the parameters
     files = os.listdir(Path(INPUT_FOLDER))
+    # make sure we have a predictable order
+    files.sort()
+    # if filename contains 'None' put it at the beginning
+    files = [file for file in files if 'None' in file] + [file for file in files if
+                                                          'None' not in file]
 
     nb_nodes = set()
-    batch_size = set()
+    batch_sizes = set()
     epochs = set()
     agg = set()
     # lr = set()
@@ -93,7 +99,7 @@ def main():
         if file.endswith('.csv'):
             labels = file.split('_')
             nb_nodes.add(labels[1])
-            batch_size.add(labels[5])
+            batch_sizes.add(labels[5])
             epochs.add(labels[7])
             agg.add(labels[9].split('Aggregator')[0])
             # lr.add(labels[11])
@@ -102,11 +108,11 @@ def main():
     agg.remove('None')
 
     for nb_of_nodes in nb_nodes:
-        for batch_size in batch_size:
+        for batch_size in batch_sizes:
             for nb_epochs in epochs:
                 for aggregator in agg:
                     if aggregator != 'None':
-                        plot([nb_of_nodes], [batch_size], [nb_epochs], ['None', aggregator])
+                        plot([nb_of_nodes], [batch_size], [nb_epochs], ['None', aggregator], files)
 
 
 if __name__ == '__main__':
