@@ -56,8 +56,16 @@ def main():
                     accuracies_train_ma.append(sum(accuracies_train[i - ma_window:i]) / ma_window)
                     accuracies_test_ma.append(sum(accuracies_test[i - ma_window:i]) / ma_window)
 
-            plt.plot(accuracies_train_ma, label=f'TRAIN nodes: {nb_nodes}, byz: {nb_byz}, agg: {agg}')
-            plt.plot(accuracies_test_ma, label=f'TEST nodes: {nb_nodes}, byz: {nb_byz}, agg: {agg}')
+            # plot train in dashed line
+            # for test use the same color as the train
+
+            plt.plot(accuracies_train_ma, label=f'TRAIN nodes: {nb_nodes}, byz: {nb_byz}, agg: {agg}',
+                     linestyle='dashed')
+
+            color = plt.gca().lines[-1].get_color()
+
+            plt.plot(accuracies_test_ma, label=f'TEST nodes: {nb_nodes}, byz: {nb_byz}, agg: {agg}', linestyle='solid',
+                     color=color)
 
     # check if there is at least one plot
     if len(plt.gca().lines) == 0:
