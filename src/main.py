@@ -13,6 +13,15 @@ from byzml_genbenefit.models.cnn import CNN_CIFAR10 as CNN
 from byzml_genbenefit.train.trainer import train, train_with_aggregation
 import argparse
 
+
+def _append_results_to_stats(stats, results):
+    stats['accuracy'].append(results['accuracy'])
+    stats['loss'].append(results['loss'])
+    stats['precision'].append(results['precision'])
+    stats['recall'].append(results['recall'])
+    stats['f1_score'].append(results['f1_score'])
+
+
 if __name__ == '__main__':
 
     # --- Argument parser ---
@@ -40,7 +49,7 @@ if __name__ == '__main__':
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = CNN(device)
     # model = NN()
-    learning_rate = 0.01
+    learning_rate = 0.1
     optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
     loss_fn = F.cross_entropy
 
@@ -85,9 +94,21 @@ if __name__ == '__main__':
     else:
         train_loader, test_loader = get_data_loader(batch_size=batch_size // nb_of_nodes, shuffle_train=True,
                                                     shuffle_test=False)
+    stats_train = {
+        'accuracy': [],
+        'loss': [],
+        'precision': [],
+        'recall': [],
+        'f1_score': []
+    }
 
-    accuracies_train = []
-    accuracies_test = []
+    stats_test = {
+        'accuracy': [],
+        'loss': [],
+        'precision': [],
+        'recall': [],
+        'f1_score': []
+    }
 
     model.to(device)
 
@@ -98,20 +119,17 @@ if __name__ == '__main__':
             train_with_aggregation(model, optimizer, loss_fn, train_loader, 1, aggregate_fn, nb_of_nodes,
                                    nb_of_byzantine_nodes, show_tqdm=False)
 
-        accuracy, _, _ = utils.compute_accuracy(train_loader, model)
-        accuracies_train.append(accuracy)
-
-        accuracy, _, _ = utils.compute_accuracy(test_loader, model)
-        accuracies_test.append(accuracy)
+        _append_results_to_stats(stats_train, utils.compute_stats(train_loader, model, loss_fn))
+        _append_results_to_stats(stats_test, utils.compute_stats(test_loader, model, loss_fn))
 
     # plot accuracies
     # utils.plot_accuracies(accuracies_train, accuracies_test, accuracy_range=(0.9, 1.0),
     #                       title=f'Accuracy on MNIST dataset, using {aggregate_fn},'
     #                             f'\n{nb_of_nodes} nodes, '
     #                             f'{nb_of_byzantine_nodes} byzantine nodes and {batch_size} batch size', save=False)
-    print(f'Final accuracy on test set: {accuracies_test[-1]}')
+    print(f'Final accuracy on test set: {stats_test["accuracy"][-1]}')
 
     # Save the accuracies in a csv file
     filename = f'./results/nodes_{nb_of_nodes}_byz_{nb_of_byzantine_nodes}_batch_' \
                f'{batch_size}_epochs_{nb_epochs}_agg_{aggregate_fn}_lr_{learning_rate}_seed_{seed}.csv'
-    utils.save_accuracies_to_csv(accuracies_train, accuracies_test, filename)
+    utils.save_stats_to_csv(stats_train, stats_test, filename)
