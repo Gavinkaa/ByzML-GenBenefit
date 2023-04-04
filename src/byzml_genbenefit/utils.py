@@ -20,7 +20,7 @@ def compute_accuracy(test_data_loader: torch.utils.data.DataLoader, model: torch
 
     with torch.no_grad():  # reduce memory consumption
         for x, y in test_data_loader:
-            # TODO check if we can send the data to the GPU
+            x, y = x.to(model.device), y.to(model.device)
             scores = model(x)
             _, predictions = scores.max(1)
             num_correct += (predictions == y).sum()
@@ -30,7 +30,7 @@ def compute_accuracy(test_data_loader: torch.utils.data.DataLoader, model: torch
 
 
 def plot_accuracies(accuracies_train: list[float], accuracies_test: list[float], title: str = 'Accuracy evolution',
-                    accuracy_range: tuple[float, float] = None):
+                    accuracy_range: tuple[float, float] = None, save: bool = False):
     """Plots the accuracies of the training and test data
 
     Args:
@@ -38,6 +38,7 @@ def plot_accuracies(accuracies_train: list[float], accuracies_test: list[float],
         accuracies_test (list[float]): The accuracies of the test data
         title (str): The title of the plot. Default: 'Accuracy evolution'
         accuracy_range (tuple[float, float]): The range of the y-axis. Default: None
+        save (bool): Whether to save the plot. Default: False
     """
 
     plt.plot(accuracies_train, label='train')
@@ -50,4 +51,22 @@ def plot_accuracies(accuracies_train: list[float], accuracies_test: list[float],
     if accuracy_range is not None:
         plt.ylim(accuracy_range)
 
-    plt.show()
+    if save:
+        fig_name = title.replace('\n', ' ').replace(' ', '_') + '.png'
+        plt.savefig(fig_name)
+    else:
+        plt.show()
+
+
+def save_accuracies_to_csv(accuracies_train: list[float], accuracies_test: list[float], filename: str):
+    """Saves the accuracies of the training and test data to a csv file
+
+    Args:
+        accuracies_train (list[float]): The accuracies of the training data
+        accuracies_test (list[float]): The accuracies of the test data
+        filename (str): The name of the file
+    """
+    with open(filename, 'w') as f:
+        f.write('epoch,train,test\n')
+        for i in range(len(accuracies_train)):
+            f.write(f'{i+1},{accuracies_train[i]},{accuracies_test[i]}\n')
