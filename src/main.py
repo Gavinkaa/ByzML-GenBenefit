@@ -8,9 +8,8 @@ from byzml_genbenefit.aggregators.cwmed import CWMedAggregator
 from byzml_genbenefit.aggregators.cwtm import CWTMAggregator
 from byzml_genbenefit.aggregators.gm import GMAggregator
 from byzml_genbenefit.aggregators.krum import KrumAggregator
-from byzml_genbenefit.data.mnist import get_data_loader
-from byzml_genbenefit.models.cnn import CNN_MNIST as CNN
-from byzml_genbenefit.models.nn import NN_MNIST as NN
+from byzml_genbenefit.data.cifar10 import get_data_loader
+from byzml_genbenefit.models.cnn import CNN_CIFAR10 as CNN
 from byzml_genbenefit.train.trainer import train, train_with_aggregation
 import argparse
 
@@ -42,7 +41,7 @@ if __name__ == '__main__':
     model = CNN(device)
     # model = NN()
     learning_rate = 0.01
-    optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
+    optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
     loss_fn = F.cross_entropy
 
     # choose the aggregator with a match
