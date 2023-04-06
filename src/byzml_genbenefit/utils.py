@@ -25,7 +25,7 @@ def compute_stats(test_data_loader: torch.utils.data.DataLoader, model: torch.nn
 
     with torch.no_grad():  # reduce memory consumption
         for x, y in test_data_loader:
-            x, y = x.to(model.device), y.to(model.device)
+            x = x.to(model.device)
             scores = model(x)
 
             scores_list.append(scores.cpu())
