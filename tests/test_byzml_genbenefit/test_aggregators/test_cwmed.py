@@ -1,5 +1,3 @@
-import random
-
 import torch
 
 from byzml_genbenefit.aggregators.cwmed import CWMedAggregator
@@ -35,4 +33,16 @@ def test_aggregate_2():
         torch.Tensor([14, 16, 18]),
     ]
 
+    check_consistency_list_tensor(aggregator, gradients, 0, expected_output)
+
+
+def test_aggregate_3():
+    gradients = [
+        [torch.Tensor([1, 2, 3]), torch.Tensor([4, 5, 6]), torch.Tensor([7, 8, 9])]
+    ]
+    expected_output = [
+        torch.Tensor([1, 2, 3]),
+        torch.Tensor([4, 5, 6]),
+        torch.Tensor([7, 8, 9]),
+    ]
     check_consistency_list_tensor(aggregator, gradients, 0, expected_output)
