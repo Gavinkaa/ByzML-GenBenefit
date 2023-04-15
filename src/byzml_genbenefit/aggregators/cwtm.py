@@ -31,10 +31,7 @@ class CWTMAggregator(aggregator.Aggregator):
             if f > 0 and f * 2 < stacked_tensor.shape[0]:
                 stacked_tensor = stacked_tensor[f:-f]
 
-            if stacked_tensor.shape[0] > 1:
-                avg_tensor = torch.mean(stacked_tensor, dim=0)
-            else:
-                avg_tensor = stacked_tensor[0]
+            avg_tensor = torch.nanmean(stacked_tensor, dim=0)
 
             aggregated_gradients.append(avg_tensor)
         return aggregated_gradients

@@ -22,6 +22,6 @@ class MeanAggregator(Aggregator):
         aggregated_gradients = []
         for i, grad_list in enumerate(zip(*gradients)):
             # Compute the element-wise average of the tensors in grad_list
-            avg_tensor = torch.mean(torch.stack(grad_list), dim=0)
+            avg_tensor = torch.nanmean(torch.stack(grad_list), dim=0)
             aggregated_gradients.append(avg_tensor)
         return aggregated_gradients

@@ -40,7 +40,7 @@ class GMAggregator(aggregator.Aggregator):
             #
             # x_new /= sum(weights)
 
-            x_new = torch.sum(torch.stack([weights[i] * g for i, g in enumerate(gradients_as_tensor)]), dim=0) / sum(
+            x_new = torch.nansum(torch.stack([weights[i] * g for i, g in enumerate(gradients_as_tensor)]), dim=0) / sum(
                 weights)
 
             if torch.norm(x_new - x) < GMAggregator.epsilon:

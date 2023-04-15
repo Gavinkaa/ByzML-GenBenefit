@@ -27,7 +27,7 @@ class KrumAggregator(aggregator.Aggregator):
             sorted_row, _ = torch.sort(row)
 
             # Sum the n - f nearest neighbors
-            distance_to_nearest_neighbors[i] = torch.sum(sorted_row[:n - f])
+            distance_to_nearest_neighbors[i] = torch.nansum(sorted_row[:n - f])
 
         return distance_to_nearest_neighbors
 
