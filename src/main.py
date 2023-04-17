@@ -122,6 +122,10 @@ if __name__ == '__main__':
         _append_results_to_stats(stats_train, utils.compute_stats(train_loader, model, loss_fn))
         _append_results_to_stats(stats_test, utils.compute_stats(test_loader, model, loss_fn))
 
+        # learning rate from 0.1 to 0.01 if train accuracy >= 0.9
+        if stats_train['accuracy'][-1] >= 0.9:
+            optimizer.param_groups[0]['lr'] /= 10
+
     # plot accuracies
     # utils.plot_accuracies(accuracies_train, accuracies_test, accuracy_range=(0.9, 1.0),
     #                       title=f'Accuracy on MNIST dataset, using {aggregate_fn},'
