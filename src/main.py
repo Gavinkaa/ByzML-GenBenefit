@@ -28,7 +28,7 @@ if __name__ == '__main__':
 
     # --- Argument parser ---
 
-    aggregators = ['cwmed', 'cwtm', 'gm', 'krum' 'multi-krum', 'none']
+    aggregators = ['cwmed', 'cwtm', 'gm', 'krum', 'multi-krum', 'none']
 
     parser = argparse.ArgumentParser(description='Argument parser for Byzantine Machine Learning')
     parser.add_argument('--aggregator', choices=aggregators, required=False, default=None,
