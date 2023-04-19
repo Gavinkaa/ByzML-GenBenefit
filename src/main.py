@@ -1,3 +1,5 @@
+import argparse
+
 import torch
 from torch.nn import functional as F
 from tqdm import tqdm
@@ -11,7 +13,6 @@ from byzml_genbenefit.aggregators.krum import KrumAggregator
 from byzml_genbenefit.data.cifar10 import get_data_loader
 from byzml_genbenefit.models.cnn import CNN_CIFAR10 as CNN
 from byzml_genbenefit.train.trainer import train, train_with_aggregation
-import argparse
 
 
 def _append_results_to_stats(stats, results):
@@ -49,8 +50,15 @@ if __name__ == '__main__':
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = CNN(device)
     # model = NN()
-    learning_rate = 0.1
-    optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
+
+    # -- adaptive learning rate --
+    initial_learning_rate = 0.1
+    accuracy_trigger = 0.9  # if accuracy >= 0.9, then lr /= 10
+    learning_rate_decay = 10
+    was_accuracy_trigger_reached = False
+    # ---------------------------
+
+    optimizer = torch.optim.SGD(model.parameters(), lr=initial_learning_rate)
     loss_fn = F.cross_entropy
 
     # choose the aggregator with a match
@@ -123,8 +131,9 @@ if __name__ == '__main__':
         _append_results_to_stats(stats_test, utils.compute_stats(test_loader, model, loss_fn))
 
         # learning rate from 0.1 to 0.01 if train accuracy >= 0.9
-        if stats_train['accuracy'][-1] >= 0.9:
-            optimizer.param_groups[0]['lr'] /= 10
+        if stats_train['accuracy'][-1] >= accuracy_trigger and not was_accuracy_trigger_reached:
+            optimizer.param_groups[0]['lr'] /= learning_rate_decay
+            was_accuracy_trigger_reached = True
 
     # plot accuracies
     # utils.plot_accuracies(accuracies_train, accuracies_test, accuracy_range=(0.9, 1.0),
@@ -135,5 +144,5 @@ if __name__ == '__main__':
 
     # Save the accuracies in a csv file
     filename = f'./results/nodes_{nb_of_nodes}_byz_{nb_of_byzantine_nodes}_batch_' \
-               f'{batch_size}_epochs_{nb_epochs}_agg_{aggregate_fn}_lr_{learning_rate}_seed_{seed}.csv'
+               f'{batch_size}_epochs_{nb_epochs}_agg_{aggregate_fn}_lr_{initial_learning_rate}_seed_{seed}.csv'
     utils.save_stats_to_csv(stats_train, stats_test, filename)
