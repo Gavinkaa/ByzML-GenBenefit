@@ -41,11 +41,13 @@ if __name__ == '__main__':
                         help='the number of nodes')
     parser.add_argument('--nb_of_byzantine_nodes', type=int, required=False, default=1,
                         help='the number of byzantine nodes')
+    parser.add_argument('--seed', type=int, required=False, default=0,
+                        help='the seed')
     args = parser.parse_args()
     # ------------------------
 
     # --- Hyper-parameters ---
-    seed = 0
+    seed = args.seed
     torch.manual_seed(seed)
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
