@@ -101,6 +101,7 @@ if __name__ == '__main__':
     print(f'  - nb_epochs: {nb_epochs}')
     print(f'  - batch_size: {batch_size}')
     print(f'  - aggregator: {aggregate_fn}')
+    print(f'  - seed: {seed}')
 
     if aggregate_fn is None:
         train_loader, test_loader = get_data_loader(batch_size=batch_size, shuffle_train=True, shuffle_test=False)
