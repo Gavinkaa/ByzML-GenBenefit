@@ -11,6 +11,7 @@ from byzml_genbenefit.aggregators.cwtm import CWTMAggregator
 from byzml_genbenefit.aggregators.gm import GMAggregator
 from byzml_genbenefit.aggregators.krum import KrumAggregator
 from byzml_genbenefit.aggregators.multi_krum import MultiKrumAggregator
+from byzml_genbenefit.aggregators.nnm import NNMAggregator
 from byzml_genbenefit.data.cifar10 import get_data_loader
 from byzml_genbenefit.models.cnn import CNN_CIFAR10 as CNN
 from byzml_genbenefit.train.trainer import train, train_with_aggregation
@@ -43,6 +44,8 @@ if __name__ == '__main__':
                         help='the number of byzantine nodes')
     parser.add_argument('--seed', type=int, required=False, default=0,
                         help='the seed')
+    parser.add_argument('--activate_nnm', action='store_true', required=False, default=False,
+                        help='whether to activate the NNM algorithm')
     args = parser.parse_args()
     # ------------------------
 
@@ -78,6 +81,9 @@ if __name__ == '__main__':
             aggregate_fn: Aggregator = MultiKrumAggregator()
         case _:
             aggregate_fn: Aggregator = None
+
+    if args.activate_nnm:
+        aggregate_fn = NNMAggregator(aggregate_fn)
 
     nb_epochs = args.epochs
 

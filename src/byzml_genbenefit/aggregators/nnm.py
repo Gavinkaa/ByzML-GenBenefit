@@ -9,7 +9,10 @@ class NNMAggregator(aggregator_module.Aggregator):
         self._aggregator = aggregator
 
     def __repr__(self):
-        return f'NNM-{self._aggregator}'
+        if self._aggregator is not None:
+            return f'NNM-{self._aggregator}'
+        else:
+            return 'NNM-None'
 
     @staticmethod
     def _apply_nnm(gradients: list, f: int) -> list:
@@ -52,4 +55,6 @@ class NNMAggregator(aggregator_module.Aggregator):
         gradients = NNMAggregator._apply_nnm(gradients, f)
 
         # Apply the given aggregator
+        if self._aggregator is None:
+            return gradients
         return self._aggregator(gradients, f)
