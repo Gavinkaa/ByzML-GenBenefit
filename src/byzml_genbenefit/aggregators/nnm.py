@@ -9,7 +9,7 @@ class NNMAggregator(aggregator_module.Aggregator):
         self._aggregator = aggregator
 
     def __repr__(self):
-        return 'NNMAggregator'
+        return 'NNMAggregator({})'.format(self._aggregator)
 
     @staticmethod
     def _apply_nnm(gradients: list, f: int) -> list:
