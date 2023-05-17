@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 # ------ SETTINGS ------
-INPUT_FOLDER = '../results/CIFAR-10'
-OUTPUT_FOLDER = '../results/CIFAR-10'
+INPUT_FOLDER = '../results/CIFAR-10/raw_data'
+OUTPUT_FOLDER = '../results/CIFAR-10/graphs'
 
 
 def plot():
@@ -77,9 +77,9 @@ def plot():
 
         # generalization_gap = accuracy_test - accuracy_train
         generalization_gap_mean = group_none.groupby('epoch') \
-            .apply(lambda x: (x['accuracy_test'] - x['accuracy_train']).mean())
+            .apply(lambda x: (x['accuracy_train'] - x['accuracy_test']).mean())
         generalization_gap_std = group_none.groupby('epoch') \
-            .apply(lambda x: (x['accuracy_test'] - x['accuracy_train']).std())
+            .apply(lambda x: (x['accuracy_train'] - x['accuracy_test']).std())
 
         ax[1].plot(generalization_gap_mean.index, generalization_gap_mean.values,
                    label='GAP - agg: None',
@@ -129,9 +129,9 @@ def plot():
 
             # accuracy_test - accuracy_train
             generalization_gap_mean = group_byz.groupby('epoch') \
-                .apply(lambda x: (x['accuracy_test'] - x['accuracy_train']).mean())
+                .apply(lambda x: (x['accuracy_train'] - x['accuracy_test']).mean())
             generalization_gap_std = group_byz.groupby('epoch') \
-                .apply(lambda x: (x['accuracy_test'] - x['accuracy_train']).std())
+                .apply(lambda x: (x['accuracy_train'] - x['accuracy_test']).std())
 
             ax[1].plot(generalization_gap_mean.index, generalization_gap_mean.values,
                        label=f'GAP - byz: {nb_byz}, agg: {aggregator}',
@@ -159,6 +159,7 @@ def plot():
                                color=ax[0].get_lines()[-1].get_color())
 
         ax[0].set_ylim([0.6, 1.0])
+        ax[1].set_ylim([-0.05, 0.3])
         ax[0].legend()
         ax[1].legend()
         ax[2].legend()
@@ -182,7 +183,7 @@ def plot():
 
         # plt.show()
         print((Path(OUTPUT_FOLDER, filename)))
-        plt.savefig(Path(OUTPUT_FOLDER, filename))
+        plt.savefig(Path(OUTPUT_FOLDER, filename), dpi=300)
         plt.close()
         # plt.clf()
 
