@@ -178,7 +178,7 @@ def plot():
         ax[2].set_title(f'Loss evolution of {aggregator} with {nb_nodes} nodes, '
                         f'{nb_epochs} epochs and batch size {batch_size}')
 
-        filename = f'z-nodes_{nb_nodes}_epochs_{nb_epochs}_batch_{batch_size}_agg_' \
+        filename = f'nodes_{nb_nodes}_epochs_{nb_epochs}_batch_{batch_size}_agg_' \
                    f'{aggregator}.png'
 
         # plt.show()
