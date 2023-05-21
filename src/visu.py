@@ -106,7 +106,7 @@ def plot():
                            loss_test_mean_none.values + loss_test_std_none.values, alpha=0.2,
                            color=ax[0].get_lines()[-1].get_color())
 
-        for nb_byz in group['nb_byz'].unique():
+        for nb_byz in group['nb_byz'].sort_values().unique():
             group_byz = group[group['nb_byz'] == nb_byz]
 
             # accuracy
