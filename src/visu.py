@@ -5,11 +5,11 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 # ------ SETTINGS ------
-INPUT_FOLDER = '../results/CIFAR-10/raw_data'
-OUTPUT_FOLDER = '../results/CIFAR-10/graphs'
+INPUT_FOLDER = '../results/MNIST/raw_data'
+OUTPUT_FOLDER = '../results/MNIST/graphs'
 
 
-def plot():
+def plot(plot_ma=1):
     plt.rcParams['figure.figsize'] = (10, 8 * 3)
 
     files = os.listdir(Path(INPUT_FOLDER))
@@ -59,11 +59,15 @@ def plot():
         group_none = df[
             (df['nb_nodes'] == nb_nodes) & (df['batch_size'] == batch_size) & (df['nb_epochs'] == nb_epochs) & (
                     df['aggregator'] == 'None') & (df['lr'] == lr)]
-        acc_test_mean_none = group_none.groupby('epoch')['accuracy_test'].mean()
-        acc_test_std_none = group_none.groupby('epoch')['accuracy_test'].std()
+        acc_test_mean_none = (group_none.groupby('epoch')['accuracy_test'].mean()).rolling(window=plot_ma,
+                                                                                           min_periods=1).mean()
+        acc_test_std_none = (group_none.groupby('epoch')['accuracy_test'].std()).rolling(window=plot_ma,
+                                                                                         min_periods=1).mean()
 
-        acc_train_mean_none = group_none.groupby('epoch')['accuracy_train'].mean()
-        acc_train_std_none = group_none.groupby('epoch')['accuracy_train'].std()
+        acc_train_mean_none = (group_none.groupby('epoch')['accuracy_train'].mean()).rolling(window=plot_ma,
+                                                                                             min_periods=1).mean()
+        acc_train_std_none = (group_none.groupby('epoch')['accuracy_train'].std()).rolling(window=plot_ma,
+                                                                                           min_periods=1).mean()
 
         ax[0].plot(acc_train_mean_none.index, acc_train_mean_none.values, label='TRAIN - agg: None',
                    linestyle='dashed')
@@ -76,10 +80,12 @@ def plot():
                            color=ax[0].get_lines()[-1].get_color())
 
         # generalization_gap = accuracy_test - accuracy_train
-        generalization_gap_mean = group_none.groupby('epoch') \
-            .apply(lambda x: (x['accuracy_train'] - x['accuracy_test']).mean())
-        generalization_gap_std = group_none.groupby('epoch') \
-            .apply(lambda x: (x['accuracy_train'] - x['accuracy_test']).std())
+        generalization_gap_mean = (group_none.groupby('epoch')
+                                   .apply(lambda x: (x['accuracy_train'] - x['accuracy_test']).mean())).rolling(
+            window=plot_ma, min_periods=1).mean()
+        generalization_gap_std = (group_none.groupby('epoch')
+                                  .apply(lambda x: (x['accuracy_train'] - x['accuracy_test']).std())).rolling(
+            window=plot_ma, min_periods=1).mean()
 
         ax[1].plot(generalization_gap_mean.index, generalization_gap_mean.values,
                    label='GAP - agg: None',
@@ -90,11 +96,15 @@ def plot():
                            generalization_gap_mean.values + generalization_gap_std.values, alpha=0.2)
 
         # add None aggregator for loss
-        loss_test_mean_none = group_none.groupby('epoch')['loss_test'].mean()
-        loss_test_std_none = group_none.groupby('epoch')['loss_test'].std()
+        loss_test_mean_none = (group_none.groupby('epoch')['loss_test'].mean()).rolling(window=plot_ma,
+                                                                                        min_periods=1).mean()
+        loss_test_std_none = (group_none.groupby('epoch')['loss_test'].std()).rolling(window=plot_ma,
+                                                                                      min_periods=1).mean()
 
-        loss_train_mean_none = group_none.groupby('epoch')['loss_train'].mean()
-        loss_train_std_none = group_none.groupby('epoch')['loss_train'].std()
+        loss_train_mean_none = (group_none.groupby('epoch')['loss_train'].mean()).rolling(window=plot_ma,
+                                                                                          min_periods=1).mean()
+        loss_train_std_none = (group_none.groupby('epoch')['loss_train'].std()).rolling(window=plot_ma,
+                                                                                        min_periods=1).mean()
 
         ax[2].plot(loss_train_mean_none.index, loss_train_mean_none.values, label='TRAIN - agg: None',
                    linestyle='dashed')
@@ -111,11 +121,15 @@ def plot():
 
             # accuracy
 
-            acc_test_mean = group_byz.groupby('epoch')['accuracy_test'].mean()
-            acc_test_std = group_byz.groupby('epoch')['accuracy_test'].std()
+            acc_test_mean = (group_byz.groupby('epoch')['accuracy_test'].mean()).rolling(window=plot_ma,
+                                                                                         min_periods=1).mean()
+            acc_test_std = (group_byz.groupby('epoch')['accuracy_test'].std()).rolling(window=plot_ma,
+                                                                                       min_periods=1).mean()
 
-            acc_train_mean = group_byz.groupby('epoch')['accuracy_train'].mean()
-            acc_train_std = group_byz.groupby('epoch')['accuracy_train'].std()
+            acc_train_mean = (group_byz.groupby('epoch')['accuracy_train'].mean()).rolling(window=plot_ma,
+                                                                                           min_periods=1).mean()
+            acc_train_std = (group_byz.groupby('epoch')['accuracy_train'].std()).rolling(window=plot_ma,
+                                                                                         min_periods=1).mean()
 
             ax[0].plot(acc_train_mean.index, acc_train_mean.values, label=f'TRAIN - byz: {nb_byz}, agg: {aggregator}',
                        linestyle='dashed')
@@ -128,10 +142,12 @@ def plot():
                                color=ax[0].get_lines()[-1].get_color())
 
             # accuracy_test - accuracy_train
-            generalization_gap_mean = group_byz.groupby('epoch') \
-                .apply(lambda x: (x['accuracy_train'] - x['accuracy_test']).mean())
-            generalization_gap_std = group_byz.groupby('epoch') \
-                .apply(lambda x: (x['accuracy_train'] - x['accuracy_test']).std())
+            generalization_gap_mean = (group_byz.groupby('epoch')
+                                       .apply(lambda x: (x['accuracy_train'] - x['accuracy_test']).mean())).rolling(
+                window=plot_ma, min_periods=1).mean()
+            generalization_gap_std = (group_byz.groupby('epoch')
+                                      .apply(lambda x: (x['accuracy_train'] - x['accuracy_test']).std())).rolling(
+                window=plot_ma, min_periods=1).mean()
 
             ax[1].plot(generalization_gap_mean.index, generalization_gap_mean.values,
                        label=f'GAP - byz: {nb_byz}, agg: {aggregator}',
@@ -142,11 +158,15 @@ def plot():
                                generalization_gap_mean.values + generalization_gap_std.values, alpha=0.2)
 
             # loss
-            loss_test_mean = group_byz.groupby('epoch')['loss_test'].mean()
-            loss_test_std = group_byz.groupby('epoch')['loss_test'].std()
+            loss_test_mean = (group_byz.groupby('epoch')['loss_test'].mean()).rolling(window=plot_ma,
+                                                                                      min_periods=1).mean()
+            loss_test_std = (group_byz.groupby('epoch')['loss_test'].std()).rolling(window=plot_ma,
+                                                                                    min_periods=1).mean()
 
-            loss_train_mean = group_byz.groupby('epoch')['loss_train'].mean()
-            loss_train_std = group_byz.groupby('epoch')['loss_train'].std()
+            loss_train_mean = (group_byz.groupby('epoch')['loss_train'].mean()).rolling(window=plot_ma,
+                                                                                        min_periods=1).mean()
+            loss_train_std = (group_byz.groupby('epoch')['loss_train'].std()).rolling(window=plot_ma,
+                                                                                      min_periods=1).mean()
 
             ax[2].plot(loss_train_mean.index, loss_train_mean.values, label=f'TRAIN - byz: {nb_byz}, agg: {aggregator}',
                        linestyle='dashed')
@@ -158,8 +178,9 @@ def plot():
                                loss_test_mean.values + loss_test_std.values, alpha=0.2,
                                color=ax[0].get_lines()[-1].get_color())
 
-        ax[0].set_ylim([0.6, 1.0])
-        ax[1].set_ylim([-0.05, 0.3])
+        ax[0].set_ylim([0.94, 1.0])
+        ax[1].set_ylim([-0.015, 0.01])
+        ax[2].set_ylim([0, 0.25])
         ax[0].legend()
         ax[1].legend()
         ax[2].legend()
@@ -171,12 +192,16 @@ def plot():
         ax[2].set_xlabel('Epoch')
         ax[2].set_ylabel('Loss')
 
-        ax[0].set_title(f'Accuracy evolution of {aggregator} with {nb_nodes} nodes, '
-                        f'{nb_epochs} epochs and batch size {batch_size}')
-        ax[1].set_title(f'Generalization gap evolution of {aggregator} with {nb_nodes} nodes, '
-                        f'{nb_epochs} epochs and batch size {batch_size}')
-        ax[2].set_title(f'Loss evolution of {aggregator} with {nb_nodes} nodes, '
-                        f'{nb_epochs} epochs and batch size {batch_size}')
+        ax[0].set_title(
+            f'{f"MA{plot_ma} " if plot_ma > 1 else ""}Accuracy evolution of {aggregator} with {nb_nodes} nodes, '
+            f'{nb_epochs} epochs and batch size {batch_size}')
+        ax[1].set_title(
+            f'{f"MA{plot_ma} " if plot_ma > 1 else ""}Generalization gap evolution of '
+            f'{aggregator} with {nb_nodes} nodes, '
+            f'{nb_epochs} epochs and batch size {batch_size}')
+        ax[2].set_title(
+            f'{f"MA{plot_ma} " if plot_ma > 1 else ""}Loss evolution of {aggregator} with {nb_nodes} nodes, '
+            f'{nb_epochs} epochs and batch size {batch_size}')
 
         filename = f'nodes_{nb_nodes}_epochs_{nb_epochs}_batch_{batch_size}_agg_' \
                    f'{aggregator}.png'
@@ -331,7 +356,7 @@ def summary_array(nodes=11):
 
 
 def main():
-    summary_array()
+    plot()
 
 
 if __name__ == '__main__':
