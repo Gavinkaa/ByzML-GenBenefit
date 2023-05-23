@@ -255,7 +255,7 @@ def summary_array(nodes=11):
         gen_gap_report = f'${float(generalization_gap_mean.values[-1] * 100):.2f} ' + \
                          r'\pm' + f' {float(generalization_gap_std.values[-1] * 100):.2f}$'
 
-        print(f'& & {acc_test_report} & {gen_gap_report} & - & - ' + r'\\')
+        print(f'& {acc_test_report} & {gen_gap_report} & - & - ' + r'\\')
 
         break
 
