@@ -227,6 +227,38 @@ def summary_array(nodes=11):
           r'''& \multicolumn{2}{|c|}{Without NNM} & \multicolumn{2}{|c|}{With NNM} \\
 & & Accuracy & Gen. gap & Accuracy & Gen. gap \\''')
 
+    # first row is for the aggregator None
+    for name, group in grouped:
+        nb_nodes = name[0]
+        batch_size = name[1]
+        nb_epochs = name[2]
+        aggregator = name[3]
+        lr = name[4]
+
+        if aggregator != 'None':
+            continue
+
+        print(r'\hline \multicolumn{2}{|c|}{Mean}', end=' ')
+
+        # accuracy
+        accuracy_test_mean = group.groupby('epoch')['accuracy_test'].mean()
+        accuracy_test_std = group.groupby('epoch')['accuracy_test'].std()
+
+        # generalization gap
+        generalization_gap_mean = group.groupby('epoch') \
+            .apply(lambda x: (x['accuracy_train'] - x['accuracy_test']).mean())
+        generalization_gap_std = group.groupby('epoch') \
+            .apply(lambda x: (x['accuracy_train'] - x['accuracy_test']).std())
+
+        acc_test_report = f'${float(accuracy_test_mean.values[-1] * 100):.2f} ' + \
+                          r'\pm' + f' {float(accuracy_test_std.values[-1] * 100):.2f}$'
+        gen_gap_report = f'${float(generalization_gap_mean.values[-1] * 100):.2f} ' + \
+                         r'\pm' + f' {float(generalization_gap_std.values[-1] * 100):.2f}$'
+
+        print(f'& & {acc_test_report} & {gen_gap_report} & - & - ' + r'\\')
+
+        break
+
     # Loop over each group and plot the mean accuracy over epochs
     for name, group in grouped:
         nb_nodes = name[0]
