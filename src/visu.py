@@ -188,6 +188,116 @@ def plot():
         # plt.clf()
 
 
+def summary_array(nodes=11):
+    files = os.listdir(Path(INPUT_FOLDER))
+
+    df = pd.DataFrame()
+
+    for file in files:
+        if not file.endswith('.csv'):
+            continue
+        file_labels = file.split('_')
+        file_nb_nodes = file_labels[1]
+        file_nb_byz = file_labels[3]
+        file_batch_size = file_labels[5]
+        file_nb_epochs = file_labels[7]
+        aggregator = file_labels[9].split('Aggregator')[0]
+        file_lr = file_labels[11]
+        file_seed = file_labels[13].split('.csv')[0]
+
+        local_df = pd.read_csv(Path(INPUT_FOLDER, file))
+        local_df['nb_nodes'] = file_nb_nodes
+        local_df['nb_byz'] = file_nb_byz
+        local_df['batch_size'] = file_batch_size
+        local_df['nb_epochs'] = file_nb_epochs
+        local_df['aggregator'] = aggregator
+        local_df['lr'] = file_lr
+        local_df['seed'] = file_seed
+
+        if int(file_nb_nodes) != nodes:
+            continue
+
+        df = pd.concat([df, local_df])
+
+    # Group the data by the tuple
+    grouped = df.groupby(['nb_nodes', 'batch_size', 'nb_epochs', 'aggregator', 'lr'])
+
+    print(r'''\begin{tabular}{|cc|cc|cc|}
+\hline \multicolumn{2}{|c|}{\multirow{2}{*}{Aggregation}} ''' +
+          r'''& \multicolumn{2}{|c|}{Without NNM} & \multicolumn{2}{|c|}{With NNM} \\
+& & Accuracy & Generalization gap & Accuracy & Generalization gap \\''')
+
+    # Loop over each group and plot the mean accuracy over epochs
+    for name, group in grouped:
+        nb_nodes = name[0]
+        batch_size = name[1]
+        nb_epochs = name[2]
+        aggregator = name[3]
+        lr = name[4]
+
+        if aggregator == 'None' or aggregator.startswith('NNM'):
+            continue
+
+        group_nnm = grouped.get_group((nb_nodes, batch_size, nb_epochs, 'NNM-' + aggregator, lr))
+
+        number_of_byz = len(group_nnm['nb_byz'].sort_values().unique())
+        print(r'\hline \multirow{' + str(number_of_byz) + r'}{*}{' + aggregator + r'}')
+
+        for nb_byz in group_nnm['nb_byz'].sort_values().unique():
+
+            group_byz = group[group['nb_byz'] == nb_byz]
+            group_byz_nnm = group_nnm[group_nnm['nb_byz'] == nb_byz]
+
+            # accuracy
+            if not group_byz.empty:
+                acc_test_mean = group_byz.groupby('epoch')['accuracy_test'].mean().values[-1]
+                acc_test_std = group_byz.groupby('epoch')['accuracy_test'].std().values[-1]
+            else:
+                acc_test_mean = '-'
+                acc_test_std = '-'
+
+            acc_test_mean_nnm = group_byz_nnm.groupby('epoch')['accuracy_test'].mean().values[-1]
+            acc_test_std_nnm = group_byz_nnm.groupby('epoch')['accuracy_test'].std().values[-1]
+
+            # accuracy_test - accuracy_train
+            if not group_byz.empty:
+                generalization_gap_mean = group_byz.groupby('epoch') \
+                    .apply(lambda x: (x['accuracy_train'] - x['accuracy_test']).mean()).values[-1]
+                generalization_gap_std = group_byz.groupby('epoch') \
+                    .apply(lambda x: (x['accuracy_train'] - x['accuracy_test']).std()).values[-1]
+            else:
+                generalization_gap_mean = '-'
+                generalization_gap_std = '-'
+
+            generalization_gap_mean_nnm = group_byz_nnm.groupby('epoch') \
+                .apply(lambda x: (x['accuracy_train'] - x['accuracy_test']).mean()).values[-1]
+            generalization_gap_std_nnm = group_byz_nnm.groupby('epoch') \
+                .apply(lambda x: (x['accuracy_train'] - x['accuracy_test']).std()).values[-1]
+
+            # Check if acc_test_mean is not equal to '-'
+            if acc_test_mean != '-':
+                acc_test_report = f'${float(acc_test_mean * 100):.2f}' + r' \pm ' + f'{float(acc_test_std * 100):.2f}$'
+            else:
+                acc_test_report = '-'
+
+            # Check if generalization_gap_mean is not equal to '-'
+            if generalization_gap_mean != '-':
+                generalization_gap_report = f'${float(generalization_gap_mean * 100):.2f}' + r' \pm ' \
+                                            + f'{float(generalization_gap_std * 100):.2f}$'
+            else:
+                generalization_gap_report = '-'
+
+            acc_test_report_nnm = f'${float(acc_test_mean_nnm * 100):.2f}' + r' \pm ' \
+                                  + f'{float(acc_test_std_nnm * 100):.2f}$'
+            generalization_gap_report_nnm = f'${float(generalization_gap_mean_nnm * 100):.2f}' \
+                                            + r' \pm ' + f'{float(generalization_gap_std_nnm * 100):.2f}$'
+
+            print(r'     & $f=' + str(nb_byz) + r'$ & ' + acc_test_report + ' & ' + generalization_gap_report + ' & '
+                  + acc_test_report_nnm + ' & ' + generalization_gap_report_nnm + r' \\')
+    print(r'\hline')
+    print(r'\end{tabular}')
+
+
 def main():
     plot()
 
