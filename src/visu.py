@@ -225,7 +225,7 @@ def summary_array(nodes=11):
     print(r'''\begin{tabular}{|cc|cc|cc|}
 \hline \multicolumn{2}{|c|}{\multirow{2}{*}{Aggregation}} ''' +
           r'''& \multicolumn{2}{|c|}{Without NNM} & \multicolumn{2}{|c|}{With NNM} \\
-& & Accuracy & Generalization gap & Accuracy & Generalization gap \\''')
+& & Accuracy & Gen. gap & Accuracy & Gen. gap \\''')
 
     # Loop over each group and plot the mean accuracy over epochs
     for name, group in grouped:
@@ -299,7 +299,7 @@ def summary_array(nodes=11):
 
 
 def main():
-    plot()
+    summary_array()
 
 
 if __name__ == '__main__':
