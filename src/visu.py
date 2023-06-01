@@ -251,8 +251,8 @@ def summary_array(nodes=11):
     print(r'''\begin{tabular}{cccccc}
 \toprule
 \textbf{Aggregation} & \textbf{$f$}
-& \multicolumn{2}{c}{\bf Without NNM} & \multicolumn{2}{c}{\bf With NNM} \\
-& & Accuracy & Gen. gap & Accuracy & Gen. gap \\''')
+& \multicolumn{2}{c}{\bf Accuracy} & \multicolumn{2}{c}{\bf Generalization gap} \\
+& & Without NNM & With NNM & Without NNM & With NNM \\''')
 
     # first row is for the aggregator None
     for name, group in grouped:
@@ -282,7 +282,7 @@ def summary_array(nodes=11):
         gen_gap_report = f'${float(generalization_gap_mean.values[-1] * 100):.2f} ' + \
                          r'\pm' + f' {float(generalization_gap_std.values[-1] * 100):.2f}$'
 
-        print(f'& {acc_test_report} & {gen_gap_report} & -- & -- ' + r'\\')
+        print(f'& {acc_test_report} & -- & {gen_gap_report} & -- ' + r'\\')
 
         break
 
@@ -351,8 +351,9 @@ def summary_array(nodes=11):
             generalization_gap_report_nnm = f'${float(generalization_gap_mean_nnm * 100):.2f}' \
                                             + r' \pm ' + f'{float(generalization_gap_std_nnm * 100):.2f}$'
 
-            print(r'     & ' + str(nb_byz) + r' & ' + acc_test_report + ' & ' + generalization_gap_report + ' & '
-                  + acc_test_report_nnm + ' & ' + generalization_gap_report_nnm + r' \\')
+            print(r'     & ' + str(nb_byz) + r' & ' + acc_test_report + ' & ' + acc_test_report_nnm + ' & '
+                  + generalization_gap_report + ' & ' + generalization_gap_report_nnm + r' \\')
+
     print(r'\bottomrule')
     print(r'\end{tabular}')
     print(r'\caption{ HERE GOES THE CAPTION }')
