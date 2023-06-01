@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 # ------ SETTINGS ------
-INPUT_FOLDER = '../results/MNIST/raw_data'
-OUTPUT_FOLDER = '../results/MNIST/graphs'
+INPUT_FOLDER = '../results/CIFAR-10/raw_data'
+OUTPUT_FOLDER = '../results/CIFAR-10/graphs'
 
 
 def plot(plot_ma=1):
@@ -246,10 +246,12 @@ def summary_array(nodes=11):
 
     # Group the data by the tuple
     grouped = df.groupby(['nb_nodes', 'batch_size', 'nb_epochs', 'aggregator', 'lr'])
-
-    print(r'''\begin{tabular}{|cc|cc|cc|}
-\hline \multicolumn{2}{|c|}{\multirow{2}{*}{Aggregation}} ''' +
-          r'''& \multicolumn{2}{|c|}{Without NNM} & \multicolumn{2}{|c|}{With NNM} \\
+    print(r'\begin{table}')
+    print(r'\centering')
+    print(r'''\begin{tabular}{cccccc}
+\toprule
+\textbf{Aggregation} & \textbf{$f$}
+& \multicolumn{2}{c}{\bf Without NNM} & \multicolumn{2}{c}{\bf With NNM} \\
 & & Accuracy & Gen. gap & Accuracy & Gen. gap \\''')
 
     # first row is for the aggregator None
@@ -263,7 +265,7 @@ def summary_array(nodes=11):
         if aggregator != 'None':
             continue
 
-        print(r'\hline \multicolumn{2}{|c|}{Mean}', end=' ')
+        print(r'\midrule Averaging & --', end=' ')
 
         # accuracy
         accuracy_test_mean = group.groupby('epoch')['accuracy_test'].mean()
@@ -280,7 +282,7 @@ def summary_array(nodes=11):
         gen_gap_report = f'${float(generalization_gap_mean.values[-1] * 100):.2f} ' + \
                          r'\pm' + f' {float(generalization_gap_std.values[-1] * 100):.2f}$'
 
-        print(f'& {acc_test_report} & {gen_gap_report} & - & - ' + r'\\')
+        print(f'& {acc_test_report} & {gen_gap_report} & -- & -- ' + r'\\')
 
         break
 
@@ -298,7 +300,7 @@ def summary_array(nodes=11):
         group_nnm = grouped.get_group((nb_nodes, batch_size, nb_epochs, 'NNM-' + aggregator, lr))
 
         number_of_byz = len(group_nnm['nb_byz'].sort_values().unique())
-        print(r'\hline \multirow{' + str(number_of_byz) + r'}{*}{' + aggregator + r'}')
+        print(r'\midrule \multirow{' + str(number_of_byz) + r'}{*}{' + aggregator + r'}')
 
         for nb_byz in group_nnm['nb_byz'].sort_values().unique():
 
@@ -310,8 +312,8 @@ def summary_array(nodes=11):
                 acc_test_mean = group_byz.groupby('epoch')['accuracy_test'].mean().values[-1]
                 acc_test_std = group_byz.groupby('epoch')['accuracy_test'].std().values[-1]
             else:
-                acc_test_mean = '-'
-                acc_test_std = '-'
+                acc_test_mean = '--'
+                acc_test_std = '--'
 
             acc_test_mean_nnm = group_byz_nnm.groupby('epoch')['accuracy_test'].mean().values[-1]
             acc_test_std_nnm = group_byz_nnm.groupby('epoch')['accuracy_test'].std().values[-1]
@@ -323,8 +325,8 @@ def summary_array(nodes=11):
                 generalization_gap_std = group_byz.groupby('epoch') \
                     .apply(lambda x: (x['accuracy_train'] - x['accuracy_test']).std()).values[-1]
             else:
-                generalization_gap_mean = '-'
-                generalization_gap_std = '-'
+                generalization_gap_mean = '--'
+                generalization_gap_std = '--'
 
             generalization_gap_mean_nnm = group_byz_nnm.groupby('epoch') \
                 .apply(lambda x: (x['accuracy_train'] - x['accuracy_test']).mean()).values[-1]
@@ -332,31 +334,33 @@ def summary_array(nodes=11):
                 .apply(lambda x: (x['accuracy_train'] - x['accuracy_test']).std()).values[-1]
 
             # Check if acc_test_mean is not equal to '-'
-            if acc_test_mean != '-':
+            if acc_test_mean != '--':
                 acc_test_report = f'${float(acc_test_mean * 100):.2f}' + r' \pm ' + f'{float(acc_test_std * 100):.2f}$'
             else:
-                acc_test_report = '-'
+                acc_test_report = '--'
 
             # Check if generalization_gap_mean is not equal to '-'
-            if generalization_gap_mean != '-':
+            if generalization_gap_mean != '--':
                 generalization_gap_report = f'${float(generalization_gap_mean * 100):.2f}' + r' \pm ' \
                                             + f'{float(generalization_gap_std * 100):.2f}$'
             else:
-                generalization_gap_report = '-'
+                generalization_gap_report = '--'
 
             acc_test_report_nnm = f'${float(acc_test_mean_nnm * 100):.2f}' + r' \pm ' \
                                   + f'{float(acc_test_std_nnm * 100):.2f}$'
             generalization_gap_report_nnm = f'${float(generalization_gap_mean_nnm * 100):.2f}' \
                                             + r' \pm ' + f'{float(generalization_gap_std_nnm * 100):.2f}$'
 
-            print(r'     & $f=' + str(nb_byz) + r'$ & ' + acc_test_report + ' & ' + generalization_gap_report + ' & '
+            print(r'     & ' + str(nb_byz) + r' & ' + acc_test_report + ' & ' + generalization_gap_report + ' & '
                   + acc_test_report_nnm + ' & ' + generalization_gap_report_nnm + r' \\')
-    print(r'\hline')
+    print(r'\bottomrule')
     print(r'\end{tabular}')
+    print(r'\caption{ HERE GOES THE CAPTION }')
+    print(r'\end{table}')
 
 
 def main():
-    plot()
+    summary_array()
 
 
 if __name__ == '__main__':
