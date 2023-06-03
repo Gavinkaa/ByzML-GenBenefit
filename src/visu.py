@@ -356,7 +356,8 @@ def summary_array(nodes=11):
 
     print(r'\bottomrule')
     print(r'\end{tabular}')
-    print(r'\caption{ HERE GOES THE CAPTION }')
+    print(r'\vspace*{2mm}')
+    print(r'\caption{ ' f'{INPUT_FOLDER} for {nodes} nodes' ' }')
     print(r'\end{table}')
 
 
