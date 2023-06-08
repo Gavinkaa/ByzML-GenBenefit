@@ -9,29 +9,6 @@ class KrumAggregator(aggregator.Aggregator):
         return 'KrumAggregator'
 
     @staticmethod
-    def _compute_distance_to_nearest_neighbors(distance_matrix: torch.Tensor, f: int) -> torch.Tensor:
-        """Computes the distance to the n - f nearest neighbors of each gradient.
-
-        Args:
-            distance_matrix (torch.Tensor): The distance matrix
-            f (int): The number of Byzantine nodes
-
-        Returns:
-            torch.Tensor: The distance to the n - f nearest neighbors of each gradient
-        """
-        n = len(distance_matrix)
-
-        distance_to_nearest_neighbors = torch.zeros(n)
-        for i, row in enumerate(distance_matrix):
-            # Sort the row in ascending order
-            sorted_row, _ = torch.sort(row)
-
-            # Sum the n - f nearest neighbors
-            distance_to_nearest_neighbors[i] = torch.sum(sorted_row[:n - f])
-
-        return distance_to_nearest_neighbors
-
-    @staticmethod
     def __call__(gradients: list, f: int) -> list:
         """Aggregates the gradients using the Krum algorithm.
 

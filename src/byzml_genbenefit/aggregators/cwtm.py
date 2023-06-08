@@ -28,10 +28,10 @@ class CWTMAggregator(aggregator.Aggregator):
 
             # Remove the f lowest and f highest values in dimension 0
             stacked_tensor, _ = torch.sort(stacked_tensor, dim=0)
-            if f != 0 and f * 2 < stacked_tensor.shape[0]:
+            if f > 0 and f * 2 < stacked_tensor.shape[0]:
                 stacked_tensor = stacked_tensor[f:-f]
 
-            avg_tensor = torch.mean(stacked_tensor, dim=0)
+            avg_tensor = torch.nanmean(stacked_tensor, dim=0)
 
             aggregated_gradients.append(avg_tensor)
         return aggregated_gradients
